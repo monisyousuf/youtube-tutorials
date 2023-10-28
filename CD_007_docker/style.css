@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&family=Source+Code+Pro&display=swap');
+
+body {
+    margin-top: 3em;
+    background-color: rgb(31, 31, 31, 1);
+    font-family: 'Source Code Pro', monospace;
+    color: rgb(172, 126, 173, 1);
+    text-align: center;
+}
+
+h1 {
+    font-family: 'Josefin Sans', sans-serif;
+    margin: 0 0 0 0;
+    margin-block-end: 0;
+    margin-block-start: 0;
+    font-size: 3em;
+}
+
+ul {
+    list-style-type: none;
+}
+
+a:link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.4em;
+    transition: color .3s ease-in-out, box-shadow .3s ease-in-out;
+}
+
+a:visited {
+    color: #fff;
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgb(31, 31, 31, 1);
+    text-decoration: underline;
+    box-shadow: inset 150px 0 0 0 rgb(172, 126, 173, 1);
+}

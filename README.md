@@ -3,6 +3,6 @@ This repository contains code examples from the youtube channel [@MonisYousuf](h
 
 ## Index
 
-| Video Title | Code Directory  | Video Link  |
+| Index  | Video Title  | Code Directory  |
 | ------- | --- | --- |
-| What is docker? Docker File, Docker Images and Docker Containers | [CD_007_Docker](./CD_007_docker/) | [Link](https://www.youtube.com/@MonisYousuf) |
+| CD_007| [What is docker? Docker File, Docker Images and Docker Containers](https://www.youtube.com/@MonisYousuf) | [CD_007_Docker](./CD_007_docker/) |

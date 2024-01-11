@@ -17,25 +17,34 @@
             <input type="text" id="text_b" autocomplete="off" />
         </div>
         <div class="button-container">
-            <button type="button" id="md5">MD5</button>
-            <button type="button" id="sha1">SHA-1</button>
-            <button type="button" id="sha256">SHA-256</button>
-            <button type="button" id="argon2">Argon2</button>
+            <button type="button" id="md5Btn">MD5</button>
+            <button type="button" id="sha1Btn">SHA-1</button>
+            <button type="button" id="sha256Btn">SHA-256</button>
+            <button type="button" id="bcryptBtn">BCrypt</button>
         </div>
-        <div class="form-field">
-            <label for="text_result" class="disabled">Result:: </label>
-            <input type="text" id="text_result" autocomplete="off" disabled />
-        </div>
-        <div class="form-field disabled">
-            <label for="hash_a" class="disabled">Hash(A): </label>
-            <textarea id="hash_a" rows="8" disabled></textarea>
-        </div>
-        <div class="form-field disabled">
-            <label for="hash_b" class="disabled">Hash(B): </label>
-            <textarea id="hash_b" rows="8" disabled></textarea>
+        <div class="result-container">
+            <div class="form-field">
+                <label for="text_result" class="disabled">Result:: </label>
+                <input type="text" id="text_result" disabled />
+            </div>
+            <div class="form-field disabled">
+                <label for="hash_a" class="disabled">hash(A): </label>
+                <input type="text" id="hash_a" disabled/>
+            </div>
+            <div class="form-field disabled">
+                <label for="hash_b" class="disabled">hash(B): </label>
+                <input type="text" id="hash_b" disabled/>
+            </div>
+            <div class="form-field disabled">
+                <label for="hash_length" class="disabled">Hash Length: </label>
+                <input type="text" id="hash_length" disabled/>
+            </div>
         </div>
     </div>
     <script src="md5.min.js"></script>
+    <script src="sha1.min.js"></script>
+    <script src="sha256.min.js"></script>
+    <script src="bcrypt.min.js"></script>
     <script src="script.js"></script>
 </body>
 

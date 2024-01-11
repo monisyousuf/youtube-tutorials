@@ -1,5 +1,8 @@
 # CD_007 | Docker
 
+### Pre Requisite:
+[Docker Desktop](https://www.docker.com/products/docker-desktop/) is installed and running on your computer.
+
 ## Tutorial 1: Hosting HTML via NGINX using Docker
 
 ### Step#1: Docker Build

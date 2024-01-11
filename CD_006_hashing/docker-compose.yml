@@ -1,0 +1,7 @@
+services:
+  hashing_app:
+    build:
+      dockerfile: app.Dockerfile
+      context: .
+    ports:
+      - 80:80

@@ -1,0 +1,42 @@
+<html>
+
+<head>
+    <title>CD_006 Hashing</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Hashing Demo</h1>
+    <div class="container">
+        <div class="form-field">
+            <label for="text_a">Text A:</label>
+            <input type="text" id="text_a" autocomplete="off" />
+        </div>
+        <div class="form-field">
+            <label for="text_b">Text B:</label>
+            <input type="text" id="text_b" autocomplete="off" />
+        </div>
+        <div class="button-container">
+            <button type="button" id="md5">MD5</button>
+            <button type="button" id="sha1">SHA-1</button>
+            <button type="button" id="sha256">SHA-256</button>
+            <button type="button" id="argon2">Argon2</button>
+        </div>
+        <div class="form-field">
+            <label for="text_result" class="disabled">Result:: </label>
+            <input type="text" id="text_result" autocomplete="off" disabled />
+        </div>
+        <div class="form-field disabled">
+            <label for="hash_a" class="disabled">Hash(A): </label>
+            <textarea id="hash_a" rows="8" disabled></textarea>
+        </div>
+        <div class="form-field disabled">
+            <label for="hash_b" class="disabled">Hash(B): </label>
+            <textarea id="hash_b" rows="8" disabled></textarea>
+        </div>
+    </div>
+    <script src="md5.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

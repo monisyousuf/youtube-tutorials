@@ -42,7 +42,7 @@ label.disabled {
 	color: var(--subtle-pink-shadow);
 }
 
-input[type="text"] {
+input[type="text"], textarea {
 	background-color: var(--dark-gray);
 	width: 40%;
     border: none;
@@ -61,10 +61,14 @@ input[type="text"]:focus {
 	color: var(--subtle-pink);
 }
 
-input[type="text"]:disabled {
+input[type="text"]:disabled, textarea {
 	border-bottom: 3px solid var(--subtle-pink-shadow);
 	background-color: var(--disabled-gray);
 	font-size: 0.9em;
+}
+
+textarea {
+	resize: none;
 }
 
 .button-container {

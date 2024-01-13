@@ -2,6 +2,7 @@ const nameField = document.getElementById('text_name');
 const emailField = document.getElementById('text_email');
 const phoneField = document.getElementById('text_phone');
 const statusField = document.getElementById('text_status');
+const statusCodeField = document.getElementById('text_status_code');
 
 const allFields = [nameField, emailField, phoneField];
 
@@ -11,16 +12,35 @@ const submitButton = document.getElementById('submit-form-button');
 
 const httpRequest = new XMLHttpRequest();
 httpRequest.responseType = 'json';
+
+let populateStatusFieldsWithError = (errorType, errors) => {
+	let statusFieldRows = 1;
+    statusField.value = errorType;
+    errors.forEach((eachError) => {
+    	statusFieldRows ++;
+    	statusField.value += '\r\n - ' + eachError;
+    });
+    statusField.rows = statusFieldRows;
+    statusField.style.color = 'orange'
+}
+
+let clearStatusFields = () => {
+	statusCodeField.value = 'xxx'
+	statusField.value = 'Idle';
+	statusField.rows = 1;
+	statusField.style.color = 'revert';
+}
+
 httpRequest.onload = () => {
-	statusField.value = 'Status Code: ' + httpRequest.status;
+	statusCodeField.value = httpRequest.status + ' ' + getFriendlyStatus(httpRequest.status);
 	if(httpRequest.status == 200) {
-		statusField.value = statusField.value + ' | Successfully submitted data';
+		statusField.value = 'Successfully submitted data';
 		statusField.style.color = 'green';
 	} else {
-		statusField.value = statusField.value + ' | Error : ' + httpRequest.response.type + ':: ' + httpRequest.response.error;
+		populateStatusFieldsWithError(httpRequest.response.type, httpRequest.response.error);
 	}
-
 }
+
 httpRequest.onerror = () => {
 	statusField.value = 'The backend server is not accessible';
 	statusField.style.color = 'red';
@@ -34,9 +54,7 @@ let clearTextFields = () => {
 	nameField.value = '';
 	emailField.value = '';
 	phoneField.value = '';
-	statusField.value = 'Idle';
-
-	statusField.style.color = 'revert';
+	clearStatusFields();
 	allFields.forEach((eachField) => eachField.style.borderBottom = 'revert')
 }
 
@@ -44,8 +62,7 @@ let defaultTextFields = () => {
 	nameField.value = 'John Doe';
     emailField.value = 'test@gmail.com';
     phoneField.value = '9876543210';
-
-    statusField.style.color = 'revert';
+	clearStatusFields();
     allFields.forEach((eachField) => eachField.style.borderBottom = 'revert')
 }
 
@@ -55,7 +72,6 @@ let isEmpty = (fieldName) => {
 
 let validFields = () => {
 	let anyEmptyField = false;
-
 	allFields.forEach((eachField) => {
 		eachField.style.borderBottom = 'revert';
 		if(isEmpty(eachField)) {
@@ -63,11 +79,11 @@ let validFields = () => {
             eachField.style.borderBottom = '1px solid red';
 		}
 	});
-
 	return !anyEmptyField;
 }
 
 let submitCreateUserFields = () => {
+	clearStatusFields();
 	if(validFields()) {
 		httpRequest.open("POST", "http://localhost:8080/user");
 		let requestBody = JSON.stringify({
@@ -77,6 +93,8 @@ let submitCreateUserFields = () => {
 		});
 		httpRequest.setRequestHeader('Content-Type','application/json');
 		httpRequest.send(requestBody);
+	} else {
+		populateStatusFieldsWithError('EMPTY_FIELDS', ['Fields marked in red were left empty'])
 	}
 }
 

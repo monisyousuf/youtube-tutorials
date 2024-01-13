@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&family=Source+Code+Pro&display=swap');
+
+:root {
+	--dark-gray: rgb(31, 31, 31, 1);
+	--subtle-pink: rgb(172, 126, 173, 1);
+	--subtle-pink-shadow: rgb(172, 126, 173, 0.4);
+	--pastel-green: rgb(52, 200, 176, 1);
+	--pastel-green-shadow: rgb(52, 200, 176, 0.4);
+	--error-red: rgb(170, 88, 78, 1);
+	--error-red-shadow: rgb(170, 88, 78, 0.4);
+	--light-gray: gray;
+	--disabled-gray: rgb(40, 40, 40, 1);
+	--source-code-font: 'Source Code Pro', monospace;
+	--general-font-size: 1.1em;
+}
+
+
+body {
+    margin-top: 3em;
+    background-color: var(--dark-gray);
+    font-family: var(--source-code-font);
+    font-size: var(--general-font-size);
+    color: var(--subtle-pink);
+    text-align: center;
+}
+
+h1 {
+    font-family: 'Josefin Sans', sans-serif;
+    margin: 0 0 0 0;
+    margin-block-end: 0;
+    margin-block-start: 0;
+    font-size: 3em;
+}
+
+.form-field {
+	margin: 1em;
+}
+
+label {
+	width: 10em;
+	display:inline-block;
+	text-align: left;
+}
+
+label.disabled {
+	color: var(--subtle-pink-shadow);
+}
+
+input[type="text"], textarea {
+	background-color: var(--dark-gray);
+	width: 40%;
+    border: none;
+    padding: 0.6em;
+    border-bottom: 1px solid var(--subtle-pink);
+    transition: width 0.4s ease-in-out;
+    color: var(--light-gray);
+    font-family: var(--source-code-font);
+    font-size: var(--general-font-size);
+}
+
+input[type="text"]:focus {
+	outline: none;
+	width: 42%;
+	border-bottom: 2px solid var(--subtle-pink);
+	color: var(--subtle-pink);
+}
+
+input[type="text"]:disabled, textarea {
+	border-bottom: 3px solid var(--subtle-pink-shadow);
+	background-color: var(--disabled-gray);
+	font-size: 0.9em;
+}
+
+textarea {
+	resize: none;
+}
+
+.button-container {
+	margin-top: 3em;
+	margin-bottom: 3em;
+}
+
+button {
+	font-size: 0.9em;
+	font-family: var(--source-code-font);
+	color: var(--dark-gray);
+	box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease 0s;
+	letter-spacing: 0.1em;
+	cursor: pointer;
+	outline: none;
+	border: 3px solid var(--subtle-pink);
+	height: 50px;
+	width: 130px;
+}
+
+button:hover {
+	background-color: var(--subtle-pink);
+	box-shadow: 0px 15px 20px var(--subtle-pink-shadow);
+    transform: translateY(-7px);
+}
+
+
+#test-connection-button {
+	width: 200px;
+	border: 3px solid var(--pastel-green);
+}
+
+#test-connection-button:hover {
+	background-color: var(--pastel-green);
+	box-shadow: 0px 15px 20px var(--pastel-green-shadow);
+}
+
+#clear-button {
+	border: 3px solid var(--error-red);
+}
+
+#clear-button:hover {
+	background-color: var(--error-red);
+	box-shadow: 0px 15px 20px var(--error-red-shadow);
+}
+
+td, th {
+	background-color: var(--disabled-gray);
+	padding: 0.8em;
+	font-size: 0.9em;
+}
+
+th {
+	background-color: var(--subtle-pink-shadow);
+	color: var(--pastel-green);
+	text-transform: uppercase;
+	font-size: var(--general-font-size);
+}
+
+div#table-name {
+	text-transform: uppercase;
+	margin-bottom: 0.8em;
+	color: var(--pastel-green)
+}

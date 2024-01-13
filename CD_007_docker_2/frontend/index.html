@@ -1,0 +1,48 @@
+<html>
+
+<head>
+    <title>CD_007 | Docker Part 2 | Docker Compose</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Docker Demo | Part#2</h1>
+    <div class="container">
+        <div class="form-field">
+            <label for="text_name">Full Name:</label>
+            <input type="text" id="text_name" value="John Doe" autocomplete="nope" />
+        </div>
+        <div class="form-field">
+            <label for="text_email">Email:</label>
+            <input type="text" id="text_email" value="test@gmail.com" autocomplete="nope" />
+        </div>
+        <div class="form-field">
+            <label for="text_phone">Phone Number:</label>
+            <input type="text" id="text_phone" value="9876543210" maxlength=10 autocomplete="nope" />
+        </div>
+        <div class="form-field">
+            <label for="text_status_code" class="disabled">Status Code: </label>
+            <input type="text" id="text_status_code" value="xxx" disabled />
+        </div>
+        <div class="form-field">
+            <label for="text_status" class="disabled">Result: </label>
+            <textarea id="text_status" rows="1" disabled>Idle</textarea>
+        </div>
+        <div class="button-container">
+            <button type="button" id="test-connection-button">Test Connection</button>
+            <button type="button" id="clear-button">Clear</button>
+            <button type="button" id="default-values-button">Auto Fill</button>
+            <button type="button" id="submit-form-button">Submit</button>
+            <button type="button" id="view-data-button">View Data</button>
+        </div>
+        <div>
+            <div id="table-name"></div>
+            <table align="center" id="results-container"></table>
+        </div>
+    </div>
+    <script src="json2html.min.js"></script>
+    <script src="status-codes.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

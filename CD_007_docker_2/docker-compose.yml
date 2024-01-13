@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  frontend_app:
+    build:
+      dockerfile: frontend.Dockerfile
+      context: frontend/
+    ports:
+      - "80:80"
+    depends_on:
+      backend_app:
+        condition: service_healthy
+  backend_app:
+    build:
+      dockerfile: backend.Dockerfile
+      context: backend/
+    ports:
+      - "8080:8080"
+    depends_on:
+      backend_database:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+  backend_database:
+    build:
+      dockerfile: database.Dockerfile
+      context: database/
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password

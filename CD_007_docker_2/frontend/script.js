@@ -50,6 +50,7 @@ let clearStatusFields = () => {
 
 let destroyResultsTable = () => {
 	resultsContainer.textContent = '';
+	tableNameContainer.textContent = '';
 }
 
 let transformUserResultsToTable = (data) => {

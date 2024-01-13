@@ -4,6 +4,10 @@
 	--dark-gray: rgb(31, 31, 31, 1);
 	--subtle-pink: rgb(172, 126, 173, 1);
 	--subtle-pink-shadow: rgb(172, 126, 173, 0.4);
+	--pastel-green: rgb(52, 200, 176, 1);
+	--pastel-green-shadow: rgb(52, 200, 176, 0.4);
+	--error-red: rgb(170, 88, 78, 1);
+	--error-red-shadow: rgb(170, 88, 78, 0.4);
 	--light-gray: gray;
 	--disabled-gray: rgb(40, 40, 40, 1);
 	--source-code-font: 'Source Code Pro', monospace;
@@ -77,7 +81,7 @@ textarea {
 }
 
 button {
-	font-size: 1.2em;
+	font-size: 0.9em;
 	font-family: var(--source-code-font);
 	color: var(--dark-gray);
 	box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
@@ -87,11 +91,31 @@ button {
 	outline: none;
 	border: 3px solid var(--subtle-pink);
 	height: 50px;
-	width: 200px;
+	width: 130px;
 }
 
 button:hover {
 	background-color: var(--subtle-pink);
 	box-shadow: 0px 15px 20px var(--subtle-pink-shadow);
     transform: translateY(-7px);
+}
+
+
+#test-connection-button {
+	width: 200px;
+	border: 3px solid var(--pastel-green);
+}
+
+#test-connection-button:hover {
+	background-color: var(--pastel-green);
+	box-shadow: 0px 15px 20px var(--pastel-green-shadow);
+}
+
+#clear-button {
+	border: 3px solid var(--error-red);
+}
+
+#clear-button:hover {
+	background-color: var(--error-red);
+	box-shadow: 0px 15px 20px var(--error-red-shadow);
 }

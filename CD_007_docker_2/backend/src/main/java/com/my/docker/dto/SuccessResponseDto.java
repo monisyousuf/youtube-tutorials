@@ -14,7 +14,6 @@ public class SuccessResponseDto {
     Operation operation;
     String message;
 
-
     @ToString
     public enum Operation {
         CREATE_USER

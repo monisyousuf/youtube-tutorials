@@ -1,14 +1,17 @@
+const bodyStyles = window.getComputedStyle(document.body);
 const nameField = document.getElementById('text_name');
 const emailField = document.getElementById('text_email');
 const phoneField = document.getElementById('text_phone');
 const statusField = document.getElementById('text_status');
 const statusCodeField = document.getElementById('text_status_code');
 
+
 const allFields = [nameField, emailField, phoneField];
 
 const clearButton = document.getElementById('clear-button');
 const defaultValuesButton = document.getElementById('default-values-button');
 const submitButton = document.getElementById('submit-form-button');
+const testConnectionButton = document.getElementById('test-connection-button');
 
 const httpRequest = new XMLHttpRequest();
 httpRequest.responseType = 'json';
@@ -21,7 +24,7 @@ let populateStatusFieldsWithError = (errorType, errors) => {
     	statusField.value += '\r\n - ' + eachError;
     });
     statusField.rows = statusFieldRows;
-    statusField.style.color = 'orange'
+    statusField.style.color = bodyStyles.getPropertyValue('--error-red');
 }
 
 let clearStatusFields = () => {
@@ -33,9 +36,10 @@ let clearStatusFields = () => {
 
 httpRequest.onload = () => {
 	statusCodeField.value = httpRequest.status + ' ' + getFriendlyStatus(httpRequest.status);
-	if(httpRequest.status == 200) {
-		statusField.value = 'Successfully submitted data';
-		statusField.style.color = 'green';
+	if(httpRequest.status == 200 || httpRequest.status == 201) {
+		statusField.value = JSON.stringify(httpRequest.response);
+		statusField.rows = ((statusField.value.length / 36) + 1);
+		statusField.style.color = bodyStyles.getPropertyValue('--pastel-green');
 	} else {
 		populateStatusFieldsWithError(httpRequest.response.type, httpRequest.response.error);
 	}
@@ -43,7 +47,7 @@ httpRequest.onload = () => {
 
 httpRequest.onerror = () => {
 	statusField.value = 'The backend server is not accessible';
-	statusField.style.color = 'red';
+	statusField.style.color = bodyStyles.getPropertyValue('--error-red');
 }
 httpRequest.onprogress = (event) => {
 	statusField.value = 'Sending Request...';
@@ -76,7 +80,7 @@ let validFields = () => {
 		eachField.style.borderBottom = 'revert';
 		if(isEmpty(eachField)) {
 			anyEmptyField = true;
-            eachField.style.borderBottom = '1px solid red';
+            eachField.style.borderBottom = '1px solid ' + bodyStyles.getPropertyValue('--error-red');
 		}
 	});
 	return !anyEmptyField;
@@ -98,6 +102,13 @@ let submitCreateUserFields = () => {
 	}
 }
 
+let testConnection = () => {
+	clearStatusFields();
+	httpRequest.open("GET", "http://localhost:8080/ping");
+	httpRequest.send();
+}
+
 clearButton.addEventListener("click", () => clearTextFields());
 submitButton.addEventListener("click", () => submitCreateUserFields());
 defaultValuesButton.addEventListener("click", () => defaultTextFields());
+testConnectionButton.addEventListener("click", () => testConnection());

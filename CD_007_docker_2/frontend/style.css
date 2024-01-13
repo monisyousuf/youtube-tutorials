@@ -119,3 +119,8 @@ button:hover {
 	background-color: var(--error-red);
 	box-shadow: 0px 15px 20px var(--error-red-shadow);
 }
+
+td {
+	background-color: var(--disabled-gray);
+	padding: 0.8em;
+}

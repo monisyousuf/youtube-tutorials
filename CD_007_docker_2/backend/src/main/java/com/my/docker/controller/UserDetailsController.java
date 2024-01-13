@@ -3,6 +3,7 @@ package com.my.docker.controller;
 import com.my.docker.dto.CreateUserDto;
 import com.my.docker.dto.ErrorDto;
 import com.my.docker.dto.SuccessResponseDto;
+import com.my.docker.dto.UserResponseDto;
 import com.my.docker.exception.UserAlreadyExistsException;
 import com.my.docker.persistence.entity.UserEntity;
 import com.my.docker.persistence.repository.UserRepository;
@@ -13,10 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -52,6 +53,15 @@ public class UserDetailsController {
                 .build();
         return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
     }
+
+
+    @GetMapping("")
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+        return ResponseEntity.ok(
+                userRepository.findAll().stream().map(UserResponseDto::from).collect(Collectors.toList())
+        );
+    }
+
 
 
     private UserAlreadyExistsException userAlreadyExistsException(String message) {

@@ -4,6 +4,7 @@ const emailField = document.getElementById('text_email');
 const phoneField = document.getElementById('text_phone');
 const statusField = document.getElementById('text_status');
 const statusCodeField = document.getElementById('text_status_code');
+const resultsContainer = document.getElementById('results-container');
 
 
 const allFields = [nameField, emailField, phoneField];
@@ -12,9 +13,12 @@ const clearButton = document.getElementById('clear-button');
 const defaultValuesButton = document.getElementById('default-values-button');
 const submitButton = document.getElementById('submit-form-button');
 const testConnectionButton = document.getElementById('test-connection-button');
+const viewDataButton = document.getElementById('view-data-button');
 
 const httpRequest = new XMLHttpRequest();
+const getUserDetailsRequest = new XMLHttpRequest();
 httpRequest.responseType = 'json';
+getUserDetailsRequest.responseType = 'json';
 
 let populateStatusFieldsWithError = (errorType, errors) => {
 	let statusFieldRows = 1;
@@ -34,6 +38,34 @@ let clearStatusFields = () => {
 	statusField.style.color = 'revert';
 }
 
+let destroyResultsTable = () => {
+	resultsContainer.textContent = '';
+}
+
+let transformUserResultsToTable = (data) => {
+	//let template = {'html':'${id} ${full_name} ${email} ${phone_number}'};
+	let transform = {"tag":"table", "children":[
+	    {"tag":"tbody","children":[
+	        {"tag":"tr","children":[
+	            {"tag":"td","html":"${id}"},
+	            {"tag":"td","html":"${full_name}"},
+	            {"tag":"td","html":"${email}"},
+	            {"tag":"td","html":"${phone_number}"},
+	        ]}
+	    ]}
+	]};
+	let template = {"tag":"tr","children":[
+	            {"tag":"td","html":"${id}"},
+	            {"tag":"td","html":"${full_name}"},
+	            {"tag":"td","html":"${email}"},
+	            {"tag":"td","html":"${phone_number}"},
+	        ]}
+	destroyResultsTable();
+	let tableHtml = json2html.render(data, template);
+	resultsContainer.insertAdjacentHTML("afterBegin", tableHtml);
+
+}
+
 httpRequest.onload = () => {
 	statusCodeField.value = httpRequest.status + ' ' + getFriendlyStatus(httpRequest.status);
 	if(httpRequest.status == 200 || httpRequest.status == 201) {
@@ -45,13 +77,25 @@ httpRequest.onload = () => {
 	}
 }
 
+getUserDetailsRequest.onload = () => {
+	statusCodeField.value = getUserDetailsRequest.status + ' ' + getFriendlyStatus(getUserDetailsRequest.status);
+	if(getUserDetailsRequest.status == 200) {
+		statusField.value = JSON.stringify(getUserDetailsRequest.response).length == 2 ? 'Received Data : No Results Found' : 'Received Data';
+		statusField.style.color = bodyStyles.getPropertyValue('--pastel-green');
+		transformUserResultsToTable(JSON.stringify(getUserDetailsRequest.response));
+	} else {
+		populateStatusFieldsWithError(getUserDetailsRequest.response.type, getUserDetailsRequest.response.error);
+	}
+}
+
 httpRequest.onerror = () => {
 	statusField.value = 'The backend server is not accessible';
 	statusField.style.color = bodyStyles.getPropertyValue('--error-red');
 }
-httpRequest.onprogress = (event) => {
-	statusField.value = 'Sending Request...';
-	statusField.style.color = 'orange';
+
+getUserDetailsRequest.onerror = () => {
+	statusField.value = 'The backend server is not accessible';
+	statusField.style.color = bodyStyles.getPropertyValue('--error-red');
 }
 
 let clearTextFields = () => {
@@ -59,6 +103,7 @@ let clearTextFields = () => {
 	emailField.value = '';
 	phoneField.value = '';
 	clearStatusFields();
+	destroyResultsTable();
 	allFields.forEach((eachField) => eachField.style.borderBottom = 'revert')
 }
 
@@ -86,6 +131,18 @@ let validFields = () => {
 	return !anyEmptyField;
 }
 
+let testConnection = () => {
+	clearStatusFields();
+	httpRequest.open("GET", "http://localhost:8080/ping");
+	httpRequest.send();
+}
+
+let getUserDetails = () => {
+	clearStatusFields();
+	getUserDetailsRequest.open("GET", "http://localhost:8080/user");
+    getUserDetailsRequest.send();
+}
+
 let submitCreateUserFields = () => {
 	clearStatusFields();
 	if(validFields()) {
@@ -102,13 +159,8 @@ let submitCreateUserFields = () => {
 	}
 }
 
-let testConnection = () => {
-	clearStatusFields();
-	httpRequest.open("GET", "http://localhost:8080/ping");
-	httpRequest.send();
-}
-
 clearButton.addEventListener("click", () => clearTextFields());
 submitButton.addEventListener("click", () => submitCreateUserFields());
 defaultValuesButton.addEventListener("click", () => defaultTextFields());
 testConnectionButton.addEventListener("click", () => testConnection());
+viewDataButton.addEventListener("click", () => getUserDetails())

@@ -29,12 +29,17 @@
             <textarea id="text_status" rows="1" disabled>Idle</textarea>
         </div>
         <div class="button-container">
+            <button type="button" id="test-connection-button">Test Connection</button>
             <button type="button" id="clear-button">Clear</button>
             <button type="button" id="default-values-button">Auto Fill</button>
             <button type="button" id="submit-form-button">Submit</button>
-            <button type="button" id="test-connection-button">Test Connection</button>
+            <button type="button" id="view-data-button">View Data</button>
+        </div>
+        <div>
+            <table align="center" id="results-container"></table>
         </div>
     </div>
+    <script src="json2html.min.js"></script>
     <script src="status-codes.js"></script>
     <script src="script.js"></script>
 </body>

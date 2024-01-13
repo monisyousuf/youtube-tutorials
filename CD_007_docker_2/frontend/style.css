@@ -120,7 +120,21 @@ button:hover {
 	box-shadow: 0px 15px 20px var(--error-red-shadow);
 }
 
-td {
+td, th {
 	background-color: var(--disabled-gray);
 	padding: 0.8em;
+	font-size: 0.9em;
+}
+
+th {
+	background-color: var(--subtle-pink-shadow);
+	color: var(--pastel-green);
+	text-transform: uppercase;
+	font-size: var(--general-font-size);
+}
+
+div#table-name {
+	text-transform: uppercase;
+	margin-bottom: 0.8em;
+	color: var(--pastel-green)
 }

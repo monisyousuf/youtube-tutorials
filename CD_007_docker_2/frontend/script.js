@@ -5,6 +5,7 @@ const phoneField = document.getElementById('text_phone');
 const statusField = document.getElementById('text_status');
 const statusCodeField = document.getElementById('text_status_code');
 const resultsContainer = document.getElementById('results-container');
+const tableNameContainer = document.getElementById('table-name');
 
 
 const allFields = [nameField, emailField, phoneField];
@@ -15,6 +16,15 @@ const submitButton = document.getElementById('submit-form-button');
 const testConnectionButton = document.getElementById('test-connection-button');
 const viewDataButton = document.getElementById('view-data-button');
 
+const tableTemplate = {"tag":"tr","children":[
+	            {"tag":"td","html":"${id}"},
+	            {"tag":"td","html":"${full_name}"},
+	            {"tag":"td","html":"${email}"},
+	            {"tag":"td","html":"${phone_number}"},
+	        ]};
+
+const tableHeader = "<tr><th>ID</th><th>Name</th><th>Email</th><th>Phone Number</th></tr>";
+const tableName = 'USER_ENTITY';
 const httpRequest = new XMLHttpRequest();
 const getUserDetailsRequest = new XMLHttpRequest();
 httpRequest.responseType = 'json';
@@ -43,27 +53,12 @@ let destroyResultsTable = () => {
 }
 
 let transformUserResultsToTable = (data) => {
-	//let template = {'html':'${id} ${full_name} ${email} ${phone_number}'};
-	let transform = {"tag":"table", "children":[
-	    {"tag":"tbody","children":[
-	        {"tag":"tr","children":[
-	            {"tag":"td","html":"${id}"},
-	            {"tag":"td","html":"${full_name}"},
-	            {"tag":"td","html":"${email}"},
-	            {"tag":"td","html":"${phone_number}"},
-	        ]}
-	    ]}
-	]};
-	let template = {"tag":"tr","children":[
-	            {"tag":"td","html":"${id}"},
-	            {"tag":"td","html":"${full_name}"},
-	            {"tag":"td","html":"${email}"},
-	            {"tag":"td","html":"${phone_number}"},
-	        ]}
 	destroyResultsTable();
-	let tableHtml = json2html.render(data, template);
-	resultsContainer.insertAdjacentHTML("afterBegin", tableHtml);
-
+	let tableHtml = json2html.render(data, tableTemplate);
+	if(tableHtml != '') {
+		tableNameContainer.textContent = tableName;
+		resultsContainer.insertAdjacentHTML("afterBegin", tableHeader + tableHtml);
+	}
 }
 
 httpRequest.onload = () => {

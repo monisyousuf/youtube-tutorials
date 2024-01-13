@@ -3,7 +3,7 @@ This repository contains code examples from the youtube channel [@MonisYousuf](h
 
 ## Pre Requisites
 A lot of code examples in this repository are based on docker so that you DON'T have to install different software like
-database, kafka, java, python, nginx and such. With Docker, you will be very easily be able to run most of the applications
+database, kafka, java, python, nginx and such. With Docker, you will be very easily able to run most of the applications
 in this repository.
 
 **What to download?** [Docker Desktop](https://www.docker.com/products/docker-desktop/)

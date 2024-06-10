@@ -7,7 +7,8 @@ SELECT
     ud.email,
     ua.house_number,
     ua.street,
-    ua.zipcode
+    ua.zipcode,
+    ua.is_default
 FROM
     user_details ud
 JOIN

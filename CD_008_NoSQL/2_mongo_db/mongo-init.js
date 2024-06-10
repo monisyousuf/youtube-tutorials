@@ -3,6 +3,7 @@ db.getSiblingDB('admin').auth(
     process.env.MONGO_INITDB_ROOT_PASSWORD
 );
 db.users.insertOne({
+	"_id": ObjectId('6666eb769bd64bae84c2d0a8'),
     "name": "Harry Potter",
     "phone_number": "+1234567890",
     "email": "harry.potter@coddiction.com",
@@ -10,7 +11,8 @@ db.users.insertOne({
         {
             "house_number": "4 Privet Drive",
             "street": "Little Whinging",
-            "zipcode": "12345"
+            "zipcode": "12345",
+            "is_default": true
         },
         {
             "house_number": "Hogwarts Castle",
@@ -20,6 +22,7 @@ db.users.insertOne({
     ]
 });
 db.users.insertOne({
+	_id: ObjectId('6666eb769bd64bae84c2d0a9'),
     "name": "Sherlock Holmes",
     "phone_number": "+9876543210",
     "email": "sherlock.holmes@coddiction.com",
@@ -27,7 +30,8 @@ db.users.insertOne({
         {
             "house_number": "221B Baker Street",
             "street": "London",
-            "zipcode": "98765"
+            "zipcode": "98765",
+            "is_default": true
         },
         {
             "house_number": "3 Abbey Grange",
@@ -42,6 +46,7 @@ db.users.insertOne({
     ]
 });
 db.users.insertOne({
+	_id: ObjectId('6666eb769bd64bae84c2d0aa'),
     "name": "Barry Allen",
     "phone_number": "+1122334455",
     "email": "barry.allen@coddiction.com",
@@ -49,7 +54,8 @@ db.users.insertOne({
         {
             "house_number": "123 Main Street",
             "street": "Central City",
-            "zipcode": "67890"
+            "zipcode": "67890",
+            "is_default": true
         },
         {
             "house_number": "1201 Cresthill Avenue",

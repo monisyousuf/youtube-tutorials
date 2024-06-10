@@ -4,6 +4,7 @@ CREATE TABLE user_address (
     house_number VARCHAR(50),
     street VARCHAR(255),
     zipcode VARCHAR(25),
+    is_default BOOLEAN,
     user_id UUID REFERENCES user_details(ID)
 );
 

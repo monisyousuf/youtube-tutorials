@@ -1,5 +1,4 @@
-version: '3.9'
-
+# Starts only postgres db
 services:
   postgres:
     container_name: cd_008_postgres

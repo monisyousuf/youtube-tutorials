@@ -1,13 +1,15 @@
 # CD_008 | NoSQL
 
 ## Pre Requisites
-Make sure docker desktop is installed on your computer. Don't have it? Check [here](https://www.docker.com/products/docker-desktop/)
+Make sure docker desktop is installed on your computer. Don't have it? Check [here](https://www.docker.com/products/docker-desktop/).
+No docker knowledge required (only installation). In case you're having troubles running the commands, see the [Troubleshooting](#c-troubleshooting) section.
 
 ## A. Quick Start
 
 ### 1. Start All Databases
 The following command will instantiate all the databases contained in the codebase on your local computer. This will
-also populate the data in the databases.
+also populate the data in the databases. After running this command, all the databases will be available to connect.
+This will enable you to run any commands against the respective databases.
 ```
 docker compose up -d --build
 ```
@@ -38,6 +40,11 @@ normalised and de-normalised. To test and run some queries, the following steps 
     -- Display Denormalized data --
     select * from denormalized_user_data;
     ```
+- #### 2.3 Exit from psql shell
+  To exit from psql shell, simply type **exit** in the psql shell.
+  ```
+  exit
+  ```
 
 ### 3. NoSQL: Document Stores (MongoDB)
 A mongodb instance with data as described in the video is added to this repository. It contains denormalized data
@@ -82,7 +89,63 @@ fetch the data present in the database.
   }
   ]);
     ```
+- #### 3.5 Exit from mongo shell
+  To exit from mongo shell, simply type **exit** in the mongo shell.
+  ```
+  exit
+  ```
 
+### 4. NoSQL: Key-Value Stores (REDIS)
+A REDIS instance with data as described in the video is added to this repository. It contains key value pairs of data.
+As described in the video example - the key is the user key and the value is the default address of that user 
+in json format.
+
+- #### 4.1 Connect to REDIS
+  This command will connect to REDIS and provide a command line interface to run queries against the data.
+    ```shell
+    docker exec -it cd_008_redis redis-cli
+    ```
+
+- #### 4.2 Display All Keys
+  Once redis-cli is accessible, the following command can be used to print all keys present in redis.
+    ```shell
+    keys *
+    ```
+  This should print the following:
+  ```
+  1) "user:d45aa268-3d5a-47d2-8e4c-00085a41d53b"
+  2) "user:ec792961-902f-4aa9-9e14-79b873c8cd3c"
+  3) "user:0f0365e0-7c5d-4149-9204-09c3199dace3"
+  ```
+  
+- ### 4.3 Get value from a key
+  Any of the keys (see [4.2 Display All Keys](#42-display-all-keys)) can be used to get its corresponding value by using the `HGET` command from redis-cli. Example:
+  ```
+  HGET user:d45aa268-3d5a-47d2-8e4c-00085a41d53b address
+  ```
+  It should print the following:
+  ```json
+  "{\"house_number\":\"221B Baker Street\", \"city\":\"London\", \"zipcode\":\"98765\"}"
+  ```
+
+- #### 4.4 Exit from redis-cli
+  To exit from redis-cli, simply type **exit** in the redis-cli.
+  ```
+  exit
+  ```
+
+### 5. Shut down all databases
+Once your testing is complete, the databases can be shut down by using the following command. After this command
+is successfully executed, the connections won't work.
+```
+docker compose down
+```
+To restart all databases, see [Start All Databases](#1-start-all-databases).
+To start only specific databases, see
+- [Start Postgres](#11-start-postgres)
+- [Start MongoDB](#21-start-mongodb)
+- [Start REDIS](#31-start-redis)
+- [Start Neo4j](#41-start-neo4j)
 
 ## B. Run Individual Databases
 The quickstart allows you to start all the databases together for convenience. However - if you wish to start any
@@ -92,7 +155,7 @@ ___
 
 ### 1. Only Relational DB : Postgres
 
-* ### Start Postgres
+* ### 1.1 Start Postgres
   Start a docker container to run postgres. It also initializes the tables and the data as described in the video.
   ```shell 
   docker compose -f ./1_rdbms/docker-compose-pg.yml up -d --build
@@ -100,7 +163,7 @@ ___
   Once postgres starts, the queries can be run against the postgres database as described in the 
 [QuickStart](#a-quick-start)/[RelationalDatabase(RDBMS)](#2-relational-database-postgres)
 
-* ### Shut down Postgres
+* ### 1.2 Shut down Postgres
   Finally, gracefully shut down postgres docker container.
 
   ```shell 
@@ -125,23 +188,40 @@ ___
   ```
 
 ___
-       
+
+### 3. Only REDIS
+
+* ### 3.1 Start REDIS
+  Start a docker container for ONLY for REDIS. The data will be pre-populated.
+   ```shell
+  docker compose -f ./3_redis/docker-compose-redis.yml up -d --build
+  ```
+  Once mongodb starts, the queries can be run against the mongodb database as described in the
+  [QuickStart](#a-quick-start)/[NOSQL: Document Stores](#3-nosql-document-stores-mongodb)
+
+* ### 3.2 Shut down REDIS
+  Finally, after testing, gracefully shut down the mongodb docker container.
+  ```shell
+  docker compose -f ./3_redis/docker-compose-redis.yml down
+  ```
+
+___   
         
 ### 4. NoSQL : Graph Based Databases
 This section describes the examples of graph based databases using [neo4j](https://neo4j.com/)
 
-### Step#1: Run neo4j
-Start a docker container for neo4j which loads the data into the database as described in the video.
-```shell
-docker compose -f ./4_neo4j/docker-compose-neo4j.yml up -d --build
-```
+* ### 4.1 Start neo4j
+  Start a docker container for neo4j which loads the data into the database as described in the video.
+  ```shell
+  docker compose -f ./4_neo4j/docker-compose-neo4j.yml up -d --build
+  ```
 
-### Step#2: Connect to neo4j
-The following command can be used to connect to neo4j's cypher-shell, where the neo4j queries can run. (Similar to how a psql client works)
-
-```bash
-docker exec -it cd_008_neo4j cypher-shell -u neo4j -p password
-```
+* ### 4.2 Connect to neo4j
+  The following command can be used to connect to neo4j's cypher-shell, where the neo4j queries can run. (Similar to how a psql client works)
+  
+  ```bash
+  docker exec -it cd_008_neo4j cypher-shell -u neo4j -p password
+  ```
 
 Example READ Query
 ```cql

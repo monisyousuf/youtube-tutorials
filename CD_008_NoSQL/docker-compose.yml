@@ -25,3 +25,11 @@ services:
       - 27017:27017
     volumes:
       - ./2_mongo_db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  # REDIS Container
+  redis:
+    build:
+      dockerfile: redis.Dockerfile
+      context: 3_redis/
+    container_name: cd_008_redis
+    ports:
+      - 6379:6379

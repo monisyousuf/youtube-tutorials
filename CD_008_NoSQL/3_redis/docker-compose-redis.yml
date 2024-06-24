@@ -1,0 +1,8 @@
+services:
+  redis:
+    build:
+      dockerfile: redis.Dockerfile
+      context: .
+    container_name: cd_008_redis_standalone
+    ports:
+      - 6379:6379

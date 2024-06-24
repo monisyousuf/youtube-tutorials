@@ -2,7 +2,7 @@ services:
   neo4j:
     build:
       dockerfile: neo4j.Dockerfile
-    container_name: cd_008_neo4j
+    container_name: cd_008_neo4j_standalone
     environment:
       NEO4J_AUTH: neo4j/password
     ports:

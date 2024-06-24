@@ -33,3 +33,14 @@ services:
     container_name: cd_008_redis
     ports:
       - 6379:6379
+  # Neo4j Container
+  neo4j:
+    build:
+      dockerfile: neo4j.Dockerfile
+      context: 4_neo4j/
+    container_name: cd_008_neo4j
+    environment:
+      NEO4J_AUTH: neo4j/password
+    ports:
+      - "7474:7474" # HTTP
+      - "7687:7687" # Bolt

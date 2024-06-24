@@ -1,8 +1,14 @@
 # CD_008 | NoSQL
 
 ## Pre Requisites
-Make sure docker desktop is installed on your computer. Don't have it? Check [here](https://www.docker.com/products/docker-desktop/).
-No docker knowledge required (only installation). In case you're having troubles running the commands, see the [Troubleshooting](#c-troubleshooting) section.
+- Make sure docker desktop is installed on your computer. Don't have it? Check [here](https://www.docker.com/products/docker-desktop/).
+No docker knowledge required (only installation). 
+- Make sure you are in the **CD_008_NoSQL** directory when executing the commands
+  ```shell
+  cd CD_008_NoSQL
+  ```
+  
+> In case you're having troubles running the commands, see the [Troubleshooting](#c-troubleshooting) section.
 
 ## A. Quick Start
 
@@ -40,6 +46,48 @@ normalised and de-normalised. To test and run some queries, the following steps 
     -- Display Denormalized data --
     select * from denormalized_user_data;
     ```
+  
+    Other tables present in the relational database for the restaurant recommendations example:
+    ```sql
+    -- Entity Tables --
+    select * from area;
+    select * from cuisine;
+    select * from dish;
+    select * from restaurant;
+      
+    -- Mapping Tables --
+    select * from restaurant_cuisine;
+    select * from restaurant_dish;
+    ```
+
+    View restaurant recommendations query:
+  ```sql
+  WITH OsteriaSippi AS (
+    SELECT r.id AS restaurant_id, r.rating, a.id AS area_id, c.id AS cuisine_id
+    FROM Restaurant r
+    JOIN Area a ON r.area_id = a.id
+    JOIN Restaurant_Cuisine rc ON r.id = rc.restaurant_id
+    JOIN Cuisine c ON rc.cuisine_id = c.id
+    WHERE r.name = 'Osteria Sippi'
+  ),
+  MatchingRestaurants AS (
+  SELECT r.id AS restaurant_id, r.name, r.rating, a.zipcode, a.city, c.id AS cuisine_id
+  FROM Restaurant r
+  JOIN Area a ON r.area_id = a.id
+  JOIN Restaurant_Cuisine rc ON r.id = rc.restaurant_id
+  JOIN Cuisine c ON rc.cuisine_id = c.id
+  JOIN OsteriaSippi os ON r.area_id = os.area_id AND c.id = os.cuisine_id
+  WHERE r.rating IN (os.rating + 1, os.rating - 1) AND r.id <> os.restaurant_id
+  )
+  SELECT mr.name AS restaurant_name, mr.rating, a.zipcode, a.city, c.name AS cuisine_name, d.name AS dish_name, d.description
+  FROM MatchingRestaurants mr
+  JOIN Restaurant_Dish rd ON mr.restaurant_id = rd.restaurant_id
+  JOIN Dish d ON rd.dish_id = d.id
+  JOIN Area a ON mr.zipcode = a.zipcode AND mr.city = a.city
+  JOIN Cuisine c ON mr.cuisine_id = c.id
+  ORDER BY mr.name, d.name;
+  ```
+
 - #### 2.3 Exit from psql shell
   To exit from psql shell, simply type **exit** in the psql shell.
   ```
@@ -118,7 +166,7 @@ in json format.
   3) "user:0f0365e0-7c5d-4149-9204-09c3199dace3"
   ```
   
-- ### 4.3 Get value from a key
+- #### 4.3 Get value from a key
   Any of the keys (see [4.2 Display All Keys](#42-display-all-keys)) can be used to get its corresponding value by using the `HGET` command from redis-cli. Example:
   ```
   HGET user:d45aa268-3d5a-47d2-8e4c-00085a41d53b address
@@ -134,7 +182,129 @@ in json format.
   exit
   ```
 
-### 5. Shut down all databases
+### 5. NoSQL: Graph Based Databases (neo4j)
+A neo4j instance as a graph based database has been added to this repository. It contains details of different
+restaurants, their cuisines, the dishes they serve and the area they are located in. These entities are
+connected to each other through a pointing mechanism.
+
+### 5.1 Access via Browser (Recommended)
+The neo4j instance can be accessed at the following URL. 
+The browser app helps you run queries via the neo4j prompt and also visualises the results in the form of graph in real time.
+```
+http://localhost:7474/
+```
+The system will ask for some details and can be logged-into by filling in the following fields:
+```
+Connect URL: neo4j:// localhost:7686
+Database: (leave blank)
+Authentication Type: Username/Password
+Username: neo4j
+Password: password
+```
+
+### 5.2 Access via Terminal
+Alternatively, the neo4j database can also be accessed via terminal by running the following command:
+```bash
+docker exec -it cd_008_neo4j cypher-shell -u neo4j -p password
+```
+
+To exit the cypher-shell, type
+```bash
+:exit
+```
+
+### 5.3 neo4j Query Examples (Cypher)
+The neo4j prompt (browser or terminal) can be used to interact with the database through the Cypher Query Language (CQL).
+Some Examples are furnished below
+- **Read All Data**
+  ```cql
+  MATCH (n)-[r]->(m)
+  RETURN n, r, m
+  ```
+
+- **Find Recommendations, When _Osteria Sippi_ is closed**
+  ```cql
+  MATCH (osteria:Restaurant {name: 'Osteria Sippi'})
+  MATCH (osteria)-[:LOCATED_IN]->(area:Area)
+  MATCH (osteria)-[:COOKS]->(osteriaCuisine:Cuisine)
+  MATCH (dish:Dish {name: 'Spaghetti Cacio-e-Pepe'})
+  MATCH (restaurant:Restaurant)-[:LOCATED_IN]->(area)
+  WHERE restaurant.rating IN [osteria.rating + 1, osteria.rating - 1] AND restaurant <> osteria
+  MATCH (restaurant)-[:COOKS]->(osteriaCuisine)
+  MATCH (restaurant)-[:SERVES]->(allDishes:Dish)
+  RETURN restaurant, osteriaCuisine AS cuisine, area, collect(allDishes) as dishes
+  ```
+  Which returns a structure like this:
+    ```mermaid
+    %%{
+      init: {
+        'theme': 'base'
+    }%%
+    mindmap
+      root(("Hostaria 
+      Farnese"))
+        :LOCATED_IN
+          Area_12345(("London
+          12345"))
+        :COOKS
+          Italian(("Italian"))
+        :SERVES
+          Pasta_Penne_Alfredo("Pasta 
+          Penne Alfredo")
+          Pasta_Carbonara("Pasta 
+          Carbonara")
+          Pizza_Margharetta("Pizza 
+          Margharetta")
+          Spaghetti_Cacio_e_Pepe("Spaghetti 
+          Cacio-e-Pepe")
+    ```
+
+- **Relational DB Query to do the same thing as above**
+  First, connect to the postgres shell (psql):
+  ```shell
+  docker exec -it cd_008_postgres psql -d user_db -U postgres_user -w postgres_pwd
+  ```
+  Then, run the following query to view the recommendations:
+  ```sql
+  WITH OsteriaSippi AS (
+    SELECT r.id AS restaurant_id, r.rating, a.id AS area_id, c.id AS cuisine_id
+    FROM Restaurant r
+    JOIN Area a ON r.area_id = a.id
+    JOIN Restaurant_Cuisine rc ON r.id = rc.restaurant_id
+    JOIN Cuisine c ON rc.cuisine_id = c.id
+    WHERE r.name = 'Osteria Sippi'
+  ),
+  MatchingRestaurants AS (
+  SELECT r.id AS restaurant_id, r.name, r.rating, a.zipcode, a.city, c.id AS cuisine_id
+  FROM Restaurant r
+  JOIN Area a ON r.area_id = a.id
+  JOIN Restaurant_Cuisine rc ON r.id = rc.restaurant_id
+  JOIN Cuisine c ON rc.cuisine_id = c.id
+  JOIN OsteriaSippi os ON r.area_id = os.area_id AND c.id = os.cuisine_id
+  WHERE r.rating IN (os.rating + 1, os.rating - 1) AND r.id <> os.restaurant_id
+  )
+  SELECT mr.name AS restaurant_name, mr.rating, a.zipcode, a.city, c.name AS cuisine_name, d.name AS dish_name, d.description
+  FROM MatchingRestaurants mr
+  JOIN Restaurant_Dish rd ON mr.restaurant_id = rd.restaurant_id
+  JOIN Dish d ON rd.dish_id = d.id
+  JOIN Area a ON mr.zipcode = a.zipcode AND mr.city = a.city
+  JOIN Cuisine c ON mr.cuisine_id = c.id
+  ORDER BY mr.name, d.name;
+  ```
+
+- **Delete All Data** 
+  ```cql
+  MATCH (n)-[r]->(m)
+  DELETE n, r, m
+  ```
+  
+  >❗In case you accidentally delete all data, it can be restored by running all the queries present in the 
+  > [4_neo4j/data.cql](4_neo4j/data.cql) in the neo4j prompt OR you can simply restart the containers, 
+  > which will revert back the data.
+
+
+
+### 6. Shut down all databases
 Once your testing is complete, the databases can be shut down by using the following command. After this command
 is successfully executed, the connections won't work.
 ```
@@ -163,7 +333,14 @@ ___
   Once postgres starts, the queries can be run against the postgres database as described in the 
 [QuickStart](#a-quick-start)/[RelationalDatabase(RDBMS)](#2-relational-database-postgres)
 
-* ### 1.2 Shut down Postgres
+* ### 1.2 Connect to Postgres
+  The standalone version's container is named (notice the _standalone at the end): cd_008_postgres**_standalone**
+
+  ```shell 
+  docker exec -it cd_008_postgres_standalone psql -d user_db -U postgres_user -w postgres_pwd
+  ```
+
+* ### 1.3 Shut down Postgres
   Finally, gracefully shut down postgres docker container.
 
   ```shell 
@@ -181,7 +358,13 @@ ___
   Once mongodb starts, the queries can be run against the mongodb database as described in the
 [QuickStart](#a-quick-start)/[NOSQL: Document Stores](#3-nosql-document-stores-mongodb)
     
-* ### 2.2 Shut down MongoDB
+* ## 2.2 Connect to Standalone MongoDB
+   ```shell
+    docker exec -it cd_008_mongo_standalone mongosh mongodb://localhost/users -u mongo_user -p 'mongo_pwd' --authenticationDatabase admin
+    ```
+  Notice the **_standalone** at the end of container name.
+
+* ### 2.3 Shut down MongoDB
   Finally, after testing, gracefully shut down the mongodb docker container.
   ```shell
   docker compose -f ./2_mongo_db/docker-compose-mongo.yml down
@@ -196,10 +379,16 @@ ___
    ```shell
   docker compose -f ./3_redis/docker-compose-redis.yml up -d --build
   ```
-  Once mongodb starts, the queries can be run against the mongodb database as described in the
-  [QuickStart](#a-quick-start)/[NOSQL: Document Stores](#3-nosql-document-stores-mongodb)
+  Once redis starts, the commands can be run against redis as described in the
+  [QuickStart](#a-quick-start)/[NOSQL: Key-Value Stores (REDIS)](#4-nosql-key-value-stores-redis)
 
-* ### 3.2 Shut down REDIS
+* ### 3.2 Connect to REDIS
+  ```shell
+  docker exec -it cd_008_redis_standalone redis-cli
+  ```
+  !Notice the **_standalone** at the end of the container name.
+
+* ### 3.3 Shut down REDIS
   Finally, after testing, gracefully shut down the mongodb docker container.
   ```shell
   docker compose -f ./3_redis/docker-compose-redis.yml down
@@ -220,15 +409,14 @@ This section describes the examples of graph based databases using [neo4j](https
   The following command can be used to connect to neo4j's cypher-shell, where the neo4j queries can run. (Similar to how a psql client works)
   
   ```bash
-  docker exec -it cd_008_neo4j cypher-shell -u neo4j -p password
+  docker exec -it cd_008_neo4j_standalone cypher-shell -u neo4j -p password
   ```
 
-Example READ Query
-```cql
-MATCH (harry:User {name: 'Harry Potter'})-[:LIVES_IN]->(address:Address)
-RETURN harry, COLLECT(address) AS addresses;
-```
-
+* ### 4.3 Exit neo4j cypher-shell
+  To exit the cypher-shell, use the following command:
+  ```bash
+  :exit
+  ```
 ___
 
 ## C. Troubleshooting

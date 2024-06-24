@@ -1,7 +1,7 @@
 # Starts only postgres db
 services:
   postgres:
-    container_name: cd_008_postgres
+    container_name: cd_008_postgres_standalone
     build:
       dockerfile: postgres.Dockerfile
     ports:

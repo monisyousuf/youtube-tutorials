@@ -1,0 +1,3 @@
+HSET user:0f0365e0-7c5d-4149-9204-09c3199dace3 address '{"house_number":"4 Privet Drive", "city":"Little Whinging", "zipcode":"12345"}'
+HSET user:d45aa268-3d5a-47d2-8e4c-00085a41d53b address '{"house_number":"221B Baker Street", "city":"London", "zipcode":"98765"}'
+HSET user:ec792961-902f-4aa9-9e14-79b873c8cd3c address '{"house_number":"123 Main Street", "city":"Central City", "zipcode":"67890"}'

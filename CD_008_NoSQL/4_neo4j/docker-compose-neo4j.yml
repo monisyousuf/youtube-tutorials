@@ -1,0 +1,11 @@
+services:
+  neo4j:
+    build:
+      dockerfile: neo4j.Dockerfile
+    container_name: cd_008_neo4j_standalone
+    environment:
+      NEO4J_AUTH: none
+      NEO4J_dbms_security_auth__enabled: false
+    ports:
+      - "7474:7474" # HTTP
+      - "7687:7687" # Bolt

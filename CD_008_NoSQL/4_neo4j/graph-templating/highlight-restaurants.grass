@@ -1,0 +1,53 @@
+node {
+  diameter: 50px;
+  color: #A5ABB6;
+  border-color: #9AA1AC;
+  border-width: 2px;
+  text-color-internal: #000;
+  font-size: 10px;
+}
+relationship {
+  color: #D9C8AE;
+  shaft-width: 2px;
+  font-size: 8px;
+  padding: 3px;
+  text-color-external: #fff;
+  text-color-internal: #fff;
+  caption: "<type>";
+  border-color: #fff;
+}
+node.Restaurant {
+  color: #6ed8bb;
+  border-color: #6ed8bb;
+  text-color-internal: #000;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Area {
+  color: #3b3b3b;
+  border-color: #3b3b3b;
+  text-color-internal: #000;
+  defaultCaption: "<id>";
+  caption: "{zipcode}";
+}
+node.Cuisine {
+  color: #3b3b3b;
+  border-color: #3b3b3b;
+  text-color-internal: #000;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Dish {
+  color: #3b3b3b;
+  border-color: #3b3b3b;
+  text-color-internal: #000;
+  defaultCaption: "<id>";
+  caption: "{name}";
+  diameter: 50px;
+}
+relationship.SERVES {
+  shaft-width: 2px;
+  color: #fff;
+  border-color: #fff;
+  text-color-internal: #fff;
+}

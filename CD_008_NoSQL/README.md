@@ -37,15 +37,34 @@ normalised and de-normalised. To test and run some queries, the following steps 
 
     Once connected to the database, run the queries to get the data as described in the video.
     ```sql
-    use user_db;
-    
     -- Display Normalized data --
     select * from user_details;
     select * from user_address;
-    
-    -- Display Denormalized data --
-    select * from denormalized_user_data;
+  ```
+  
+    ```sql
+  -- Join tables and display data --
+  SELECT 
+    ud.ID AS user_id,
+    ud.name,
+    ud.phone_number,
+    ud.email,
+    ua.house_number,
+    ua.street,
+    ua.zipcode,
+    ua.is_default
+  FROM
+    user_details ud
+  LEFT JOIN
+    user_address ua
+  ON
+    ud.ID = ua.user_id;
     ```
+  
+  ```sql
+  -- Display Denormalized data --
+  select * from denormalized_user_data;
+  ```
   
     Other tables present in the relational database for the restaurant recommendations example:
     ```sql

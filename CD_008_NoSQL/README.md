@@ -253,7 +253,7 @@ Some Examples are furnished below
   ```
   Which returns a structure like this:
 
-  ![neo4j Restaurant Recommendations](./4_neo4j/graph-templating/img/noe4j-result.png)
+  ![neo4j Restaurant Recommendations](./4_neo4j/graph-templating/img/neo4j-recommendation-result.png)
 
 - **Relational DB Query to do the same thing as above**
   First, connect to the postgres shell (psql):

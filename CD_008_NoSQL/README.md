@@ -252,29 +252,8 @@ Some Examples are furnished below
   RETURN restaurant, osteriaCuisine AS cuisine, area, collect(allDishes) as dishes
   ```
   Which returns a structure like this:
-    ```mermaid
-    %%{
-      init: {
-        'theme': 'base'
-    }%%
-    mindmap
-      root(("Hostaria 
-      Farnese"))
-        :LOCATED_IN
-          Area_12345(("London
-          12345"))
-        :COOKS
-          Italian(("Italian"))
-        :SERVES
-          Pasta_Penne_Alfredo("Pasta 
-          Penne Alfredo")
-          Pasta_Carbonara("Pasta 
-          Carbonara")
-          Pizza_Margharetta("Pizza 
-          Margharetta")
-          Spaghetti_Cacio_e_Pepe("Spaghetti 
-          Cacio-e-Pepe")
-    ```
+
+  ![neo4j Restaurant Recommendations](./4_neo4j/graph-templating/img/noe4j-result.png)
 
 - **Relational DB Query to do the same thing as above**
   First, connect to the postgres shell (psql):

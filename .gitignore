@@ -51,3 +51,6 @@ gradle-app.setting
 
 #macOS
 .DS_Store
+
+#Specific Files
+docker.prod.zip

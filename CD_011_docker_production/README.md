@@ -9,6 +9,7 @@ ___
   ```
 - You have a private docker registry (Steps detailed below)
 - You have a linux server on a cloud environment (e.g. AWS EC2)
+- Docker CLI is installed on your cloud server (see Pt#2 of the [Troubleshooting Guide](./TROUBLESHOOTING.md))
 
 ## Getting a Docker Registry
 1. Go to [hub.docker.com](https://hub.docker.com)

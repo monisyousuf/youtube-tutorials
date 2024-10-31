@@ -94,7 +94,39 @@ There could be many reasons that you are not able to access your app.
     ```shell
     docker logs my_container
     ```
-   
+
+### 6. How to add secret variables?
+> [!WARNING]  
+> Make sure to UN-CHECK the "Expand variable reference" for all the variables
+
+1. Login to Gitlab
+2. Go to your repository
+3. In the left panel, go to Settings -> CI/CD
+4. Click "Variables" -> "Add Variable" and add the following variables one by one.
+
+    | KEY                 | VALUE                                                                                                                 | VISIBILITY        |
+    |---------------------|-----------------------------------------------------------------------------------------------------------------------|-------------------|
+    | DOCKER_HUB_PASSWORD | Your docker hub password                                                                                              | Masked and Hidden |
+    | SERVER_USER         | ec2-user                                                                                                              | Masked            |
+    | SERVER_DNS_OR_IP    | Your server's PUBLIC IP Address or DNS                                                                                | Masked            |
+    | SSH_PRIVATE_KEY     | Contents of your SSH Private Key (.pem file). For more details, see [README](./README.md) -> **AWS EC2 Server Setup** | Visible           |
+
+
+> [!WARNING]  
+> Ideally, in production environment the visibility of SSH_PRIVATE_KEY should be "Masked and Hidden". 
+> To do this, the file must first be base64 encoded and then added as a variable. 
+> Subsequently, in the pipeline steps it is base64 decoded before use.
+> For the sake of simplicity and platform independence purposes, we omitted this part from the code examples.
+
+# 7. How to trigger the CI/CD pipeline?
+1. Make sure that you have a repository in Gitlab.
+2. In the repository the contents of this directory [CD_011_docker_production](.) need to be pushed.
+3. Once pushed, the pipeline will automatically be triggered.
+4. The pipeline progress can be viewed in Gitlab -> Your Repository -> Build (in the left panel) -> Pipelines
+5. Here, you can click on the "Status" (Passed/Failed) to view the pipeline and its steps.
+6. Whenever you merge to the main branch, the pipeline can be triggered automatically.
+7. To trigger pipeline manually, you can go to Build (left panel) -> Pipelines
+8. In the top-right corner, click on "New Pipeline" and then simply click "Run Pipeline"
 
 ## Still having Issues?
 Write your problem in the comments of my video and I'll try my best to address them :)

@@ -96,13 +96,11 @@ There could be many reasons that you are not able to access your app.
     ```
 
 ### 6. How to add secret variables?
-> [!WARNING]  
-> Make sure to UN-CHECK the "Expand variable reference" for all the variables
-
 1. Login to Gitlab
 2. Go to your repository
 3. In the left panel, go to Settings -> CI/CD
 4. Click "Variables" -> "Add Variable" and add the following variables one by one.
+5. ❗Make sure to UN-CHECK the "Expand variable reference" for all the variables
 
     | KEY                 | VALUE                                                                                                                 | VISIBILITY        |
     |---------------------|-----------------------------------------------------------------------------------------------------------------------|-------------------|

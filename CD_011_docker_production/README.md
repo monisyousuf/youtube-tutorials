@@ -53,6 +53,20 @@ An AWS account is required to create an EC2 Instance. Once logged-in into the AW
 # ssh -i <path to your key> ec2-user@<your-ec2-server-public-ip>
 ssh -i "<path-to>/ec2-remote-login-key.pem" ec2-user@52.12.345.678
 ```
+
+### Install Docker on your server (One Time)
+Once successfully logged in into the server terminal, docker CLI can be installed by using the following commands.
+Once executed successfully, please RESTART your EC2 instance.
+
+```bash
+sudo yum update -y
+sudo yum install docker -y
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+# Restart your EC2 Instance
+# !! Replace ec2-user with the user that is used to login to the production server
+```
+
 ___
 ## Deployment Process
 1. An image from the current code can be created using the following command:

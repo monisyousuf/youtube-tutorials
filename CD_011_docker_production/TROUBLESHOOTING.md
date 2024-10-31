@@ -102,6 +102,7 @@ There could be many reasons that you are not able to access your app.
 4. Click "Variables" -> "Add Variable" and add the following variables one by one.
 5. ❗Make sure to UN-CHECK the "Expand variable reference" for all the variables
 
+
     | KEY                 | VALUE                                                                                                                 | VISIBILITY        |
     |---------------------|-----------------------------------------------------------------------------------------------------------------------|-------------------|
     | DOCKER_HUB_PASSWORD | Your docker hub password                                                                                              | Masked and Hidden |
@@ -116,7 +117,7 @@ There could be many reasons that you are not able to access your app.
 > Subsequently, in the pipeline steps it is base64 decoded before use.
 > For the sake of simplicity and platform independence purposes, we omitted this part from the code examples.
 
-# 7. How to trigger the CI/CD pipeline?
+### 7. How to trigger the CI/CD pipeline?
 1. Make sure that you have a repository in Gitlab.
 2. In the repository the contents of this directory [CD_011_docker_production](.) need to be pushed.
 3. Once pushed, the pipeline will automatically be triggered.

@@ -11,7 +11,7 @@ ___
 - You have a linux server on a cloud environment (e.g. AWS EC2)
 - Docker CLI is installed on your cloud server (see Pt#2 of the [Troubleshooting Guide](./TROUBLESHOOTING.md))
 
-## Getting a Docker Registry
+### Getting a Docker Registry
 1. Go to [hub.docker.com](https://hub.docker.com)
 2. Click on "Sign Up" to create a new account.
 3. Choose a **username**. This will be used as your **namespace**
@@ -23,7 +23,51 @@ ___
 > Choose your username and repository name wisely. While creating an image, you need to use both. 
 > For example: `<namespace>/<repository-name>`
 
+### AWS EC2 Server Setup
+Setting up a server will be useful for testing the full docker deployment process. Especially in the case of a CI/CD pipeline.
+An AWS account is required to create an EC2 Instance. Once logged-in into the AWS Account, the following steps can be followed:
 
+1. In the search bar, search for "EC2" and click on the EC2 from the autosuggest bar.
+2. Click on "Instances"
+3. Click on "Launch Instances" (See top right corner, orange button)
+4. Select "Amazon Linux"
+5. Select "Instance Type" as "t2.micro" or any other Free tier eligible server
+6. In the "Key-Pair" section, click on "Create new key pair"
+7. Keep the defaults, name your key as `ec2-remote-login-key`. Key Pair type as `RSA` and the format as `.pem` and click "Create Key Pair"
+8. This will open a download dialog. Save the key in a safe location. Preferably in your code directory - but make sure its NOT committed (add `*.pem` in the `.gitignore` file)
+9. Scroll down to "Network Settings" and keep the default settings except for two things:
+    - Check "Allow SSH traffic from Anywhere"
+    - Check "Allow HTTP traffic from the internet"
+10. Keep rest of the defaults and click "Launch Instance"
+11. Give it a few minutes to spin up. It will soon be visible in the "Instances" section of EC2.
+
+### Connecting to the EC2 Server remotely
+1. In the "Instances" section of EC2, click on the checkbox beside the running instance.
+2. On the top, click "Connect"
+3. Using "EC2 Instance Connect" will enable you to remotely access your server terminal quickly via browser
+4. Alternatively, you can click on "SSH Client", which will give you a couple of commands to remotely access your server terminal via your computer's command line.
+5. This method requires that OpenSSH is installed on your computer.
+6. The command to connect to your remote server could look like this:
+
+```bash
+# ssh -i <path to your key> ec2-user@<your-ec2-server-public-ip>
+ssh -i "<path-to>/ec2-remote-login-key.pem" ec2-user@52.12.345.678
+```
+
+### Install Docker on your server (One Time)
+Once successfully logged in into the server terminal, docker CLI can be installed by using the following commands.
+Once executed successfully, please RESTART your EC2 instance.
+
+```bash
+sudo yum update -y
+sudo yum install docker -y
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+# Restart your EC2 Instance
+# !! Replace ec2-user with the user that is used to login to the production server
+```
+
+___
 ## Deployment Process
 1. An image from the current code can be created using the following command:
     ```shell

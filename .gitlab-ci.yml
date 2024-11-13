@@ -1,0 +1,44 @@
+stages:
+  - test
+  - build_and_upload_image
+  - deploy
+
+variables:
+  NAMESPACE: "docker4youtube" # Your docker hub username
+  IMAGE_NAME: "my-personal-image" # Your repository name
+  CONTAINER_NAME: "my-container"
+  IMAGE_TAG: "$NAMESPACE/$IMAGE_NAME"  # Standardized image tag
+  DOCKER_HUB_USERNAME: "$NAMESPACE"
+# Details for adding secret variables in TROUBLESHOOTING.md -> 6. How to add secret variables?
+
+# 1. Test the Spring Boot application
+test:
+  stage: test
+  image: gradle:7.3.3-jdk17-alpine
+  script:
+    - infra/01-test.sh  # Test script
+
+# 2. Build the Docker image with the latest Git commit hash as the tag
+build_and_upload_image:
+  stage: build_and_upload_image
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - infra/00-docker-setup.sh  # Docker login setup
+  script:
+    - infra/02-build_image.sh  # Build Docker image script
+    - infra/03-upload_image.sh  # Docker push script
+
+
+# 3. SSH into EC2, pull the Docker image, and run it
+deploy:
+  stage: deploy
+  image: alpine:latest  # Using lightweight Alpine for the SSH part
+  script:
+    - echo "Setting up SSH"
+    - infra/00-ssh-setup.sh  # SSH setup
+    - echo "Starting deployment process"
+    - infra/04-deploy.sh  # Deploy script
+
+

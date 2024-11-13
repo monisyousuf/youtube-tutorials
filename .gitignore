@@ -54,3 +54,5 @@ gradle-app.setting
 
 #Specific Files
 docker.prod.zip
+*.pem
+*.ppk

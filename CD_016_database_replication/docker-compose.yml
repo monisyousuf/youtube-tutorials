@@ -1,0 +1,57 @@
+services:
+  primary:
+    build:
+      context: ./primary_db
+      dockerfile: primary.db.Dockerfile
+    container_name: primary
+    environment:
+      # !! Username and password MUST not be added here on production
+      POSTGRES_USER: master_user
+      POSTGRES_PASSWORD: master_password
+      POSTGRES_DB: mydb
+      PGDATABASE: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - primary-data:/var/lib/postgresql/data
+
+  replica_one:
+    build:
+      context: ./secondary_db
+      dockerfile: secondary.db.Dockerfile
+    container_name: replica_one
+    environment:
+      PRIMARY_HOST: primary
+      # !! Username and password MUST not be added here on production
+      REPLICA_USER: read_replica
+      REPLICA_PASSWORD: read_replica_password
+      REPLICA_SLOT: replica_one_slot
+    depends_on:
+      - primary
+    ports:
+      - "5433:5432"
+    volumes:
+      - replica_one_data:/var/lib/postgresql/data
+
+  replica_two:
+    build:
+      context: ./secondary_db
+      dockerfile: secondary.db.Dockerfile
+    container_name: replica_two
+    environment:
+      # !! Username and password MUST not be added here on production
+      PRIMARY_HOST: primary
+      REPLICA_USER: read_replica
+      REPLICA_PASSWORD: read_replica_password
+      REPLICA_SLOT: replica_one_slot
+    depends_on:
+      - primary
+    ports:
+      - "5434:5432"
+    volumes:
+      - replica_two_data:/var/lib/postgresql/data
+
+volumes:
+  primary-data:
+  replica_one_data:
+  replica_two_data:

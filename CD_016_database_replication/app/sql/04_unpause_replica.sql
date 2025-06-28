@@ -1,0 +1,1 @@
+SELECT pg_wal_replay_resume();

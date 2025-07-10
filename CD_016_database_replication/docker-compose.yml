@@ -1,15 +1,36 @@
 services:
+
+  app:
+    build:
+      context: ./app
+      dockerfile: app.Dockerfile
+    volumes:
+      - ./app:/app
+    depends_on:
+      - primary
+      - replica_one
+      - replica_two
+    env_file:
+      - .env
+    environment:
+      PRIMARY_DSN: "postgres://${PRIMARY_MASTER_USER}:${PRIMARY_MASTER_PASSWORD}@primary:5432/${DEFAULT_WORKING_DATABASE}"
+      REPLICA1_DSN: "postgres://${READ_REPLICA_USER}:${READ_REPLICA_PASSWORD}@replica_one:5432/${DEFAULT_WORKING_DATABASE}"
+      REPLICA2_DSN: "postgres://${READ_REPLICA_USER}:${READ_REPLICA_PASSWORD}@replica_two:5432/${DEFAULT_WORKING_DATABASE}"
+    stdin_open: true    # keep STDIN/TTY for interactive menu
+    tty: true
   primary:
     build:
       context: ./primary_db
       dockerfile: primary.db.Dockerfile
     container_name: primary
+    env_file:
+      - .env
     environment:
-      # !! Username and password MUST not be added here on production
-      POSTGRES_USER: master_user
-      POSTGRES_PASSWORD: master_password
-      POSTGRES_DB: mydb
-      PGDATABASE: mydb
+      # See .env file
+      POSTGRES_USER: ${PRIMARY_MASTER_USER}
+      POSTGRES_PASSWORD: ${PRIMARY_MASTER_PASSWORD}
+      POSTGRES_DB: ${DEFAULT_WORKING_DATABASE}
+      PGDATABASE: ${DEFAULT_WORKING_DATABASE}
     ports:
       - "5432:5432"
     volumes:
@@ -20,11 +41,13 @@ services:
       context: ./secondary_db
       dockerfile: secondary.db.Dockerfile
     container_name: replica_one
+    env_file:
+      - .env
     environment:
+      # !! See .env file
       PRIMARY_HOST: primary
-      # !! Username and password MUST not be added here on production
-      REPLICA_USER: read_replica
-      REPLICA_PASSWORD: read_replica_password
+      REPLICA_USER: ${READ_REPLICA_USER}
+      REPLICA_PASSWORD: ${READ_REPLICA_PASSWORD}
       REPLICA_SLOT: replica_one_slot
     depends_on:
       - primary
@@ -38,11 +61,13 @@ services:
       context: ./secondary_db
       dockerfile: secondary.db.Dockerfile
     container_name: replica_two
+    env_file:
+      - .env
     environment:
-      # !! Username and password MUST not be added here on production
+      # !! See .env file
       PRIMARY_HOST: primary
-      REPLICA_USER: read_replica
-      REPLICA_PASSWORD: read_replica_password
+      REPLICA_USER: ${READ_REPLICA_USER}
+      REPLICA_PASSWORD: ${READ_REPLICA_PASSWORD}
       REPLICA_SLOT: replica_one_slot
     depends_on:
       - primary

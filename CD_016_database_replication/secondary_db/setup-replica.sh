@@ -22,5 +22,9 @@ if [ -z "$(ls -A $DATA_DIR)" ]; then
   chmod 700 "$DATA_DIR"
 fi
 
+# Adding the replica credentials and the name, so that they can be registered with the primary for ACK
+# To validate accurate registration see: `../app/sql/check-replica-registration.sql`
 echo "Starting PostgreSQL replica..."
-exec gosu postgres postgres -D "$DATA_DIR"
+exec gosu postgres postgres \
+  -c primary_conninfo="host=$PRIMARY_HOST port=5432 user=$REPLICA_USER password=$REPLICA_PASSWORD application_name=$REPLICA_NAME" \
+  -D "$DATA_DIR"

@@ -48,7 +48,7 @@ services:
       PRIMARY_HOST: primary
       REPLICA_USER: ${READ_REPLICA_USER}
       REPLICA_PASSWORD: ${READ_REPLICA_PASSWORD}
-      REPLICA_SLOT: replica_one_slot
+      REPLICA_NAME: replica_one
     depends_on:
       - primary
     ports:
@@ -68,7 +68,7 @@ services:
       PRIMARY_HOST: primary
       REPLICA_USER: ${READ_REPLICA_USER}
       REPLICA_PASSWORD: ${READ_REPLICA_PASSWORD}
-      REPLICA_SLOT: replica_one_slot
+      REPLICA_NAME: replica_two
     depends_on:
       - primary
     ports:

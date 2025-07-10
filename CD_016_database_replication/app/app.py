@@ -22,6 +22,7 @@ SQL_DIR = Path(__file__).parent / "sql"
 # SQL filenames (must exist in `sql/` folder)
 WRITE_SQL_FILE = SQL_DIR / "write.sql"
 READ_SQL_FILE  = SQL_DIR / "read.sql"
+CHECK_REPLICA_REGISTRATION_SQL_FILE = SQL_DIR / "check-replica-registration.sql"
 
 console = Console()
 
@@ -61,8 +62,13 @@ def read_from_replica(dsn: str, label: str):
     display_logs(dsn, title=f"Logs on [blue]{label}[/blue]")
 
 
-def display_logs(dsn: str, title: str):
-    sql = READ_SQL_FILE.read_text()
+def check_replica_registration():
+    console.rule(f"[bold green]Read from PRIMARY[/]")
+    display_logs(PRIMARY_DSN, title=f"Status on [green]PRIMARY[/green]", sql_file=CHECK_REPLICA_REGISTRATION_SQL_FILE)
+
+
+def display_logs(dsn: str, title: str, sql_file=READ_SQL_FILE):
+    sql = sql_file.read_text()
     with get_conn(dsn) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
@@ -81,22 +87,25 @@ def main_menu():
     while True:
         console.print(Panel.fit(
             Align.center(
+                "[0] Check [red]REPLICATION STATUS[/red]\n"
                 "[1] Write to [green]PRIMARY[/green]\n"
                 "[2] Read from [blue]REPLICA 1[/blue]\n"
                 "[3] Read from [blue]REPLICA 2[/blue]\n"
                 "[4] Quit",
                 vertical="middle"
             ),
-            title="[bold yellow]Mini-PG Admin[/bold yellow]",
+            title="[bold yellow]Mini DB Admin[/bold yellow]",
             border_style="yellow"
         ))
         try:
             # Rich prompt for menu selection
-            choice = console.input("[bold]Select an option [1-4]:[/]").strip()
+            choice = console.input("[bold]Select an option [0-4]:[/]").strip()[:255]
         except (EOFError, KeyboardInterrupt):
             console.print("\n[red]Selection cancelled, exiting.[/red]")
             sys.exit(1)
-        if choice == '1':
+        if choice == '0':
+            check_replica_registration()
+        elif choice == '1':
             write_to_primary()
         elif choice == '2':
             read_from_replica(REPLICA1_DSN, "REPLICA 1")
@@ -106,7 +115,7 @@ def main_menu():
             console.print("\n:wave: Goodbye!\n")
             sys.exit(0)
         else:
-            console.print("[red]Invalid choice[/red], please enter 1–4.")
+            console.print("[red]Invalid choice[/red], please enter 0–4.")
 
 if __name__ == "__main__":
     try:

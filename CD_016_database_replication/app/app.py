@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+from time import sleep, perf_counter
 from pathlib import Path
 from rich import box
 from rich.console import Console
@@ -23,6 +24,8 @@ SQL_DIR = Path(__file__).parent / "sql"
 WRITE_SQL_FILE = SQL_DIR / "write.sql"
 READ_SQL_FILE  = SQL_DIR / "read.sql"
 CHECK_REPLICA_REGISTRATION_SQL_FILE = SQL_DIR / "check-replica-registration.sql"
+PAUSE_REPLICA_SQL_FILE = SQL_DIR / "pause.sql"
+RESUME_REPLICA_SQL_FILE = SQL_DIR / "resume.sql"
 
 console = Console()
 
@@ -49,12 +52,14 @@ def write_to_primary():
         console.print("[red]Input cancelled[/red]")
         return
     sql = WRITE_SQL_FILE.read_text()
-    with get_conn(PRIMARY_DSN) as conn:
-        with conn.cursor() as cur:
-            cur.execute(sql, (msg,))
-            conn.commit()
-    console.print(f":white_check_mark: Inserted [bold]{msg}[/bold] into PRIMARY")
-    display_logs(PRIMARY_DSN, title="Current rows on [green]PRIMARY[/green]")
+    with console.status("[bold green]Writing Data & Waiting for Replicas.....[/bold green]") as status:
+        with get_conn(PRIMARY_DSN) as conn:
+            with conn.cursor() as cur:
+                t0 = perf_counter()
+                cur.execute(sql, (msg,))
+                t1 = perf_counter()
+    console.rule(f":exclamation: Inserted [bold]{msg}[/bold] into [green]PRIMARY[/green]. COMMIT took [bold red]{(t1 - t0)*1000:.2f} ms[/bold red]")
+    display_logs(PRIMARY_DSN, title="")
 
 
 def read_from_replica(dsn: str, label: str):
@@ -65,6 +70,15 @@ def read_from_replica(dsn: str, label: str):
 def check_replica_registration():
     console.rule(f"[bold green]Read from PRIMARY[/]")
     display_logs(PRIMARY_DSN, title=f"Status on [green]PRIMARY[/green]", sql_file=CHECK_REPLICA_REGISTRATION_SQL_FILE)
+
+
+def pause_replica(dsn: str, label: str):
+    console.rule(f"[bold blue]Read from {label}[/]")
+    display_logs(dsn, title=f"Logs on [blue]{label}[/blue]", sql_file=PAUSE_REPLICA_SQL_FILE)
+
+def resume_replica(dsn: str, label: str):
+    console.rule(f"[bold blue]Read from {label}[/]")
+    display_logs(dsn, title=f"Logs on [blue]{label}[/blue]", sql_file=RESUME_REPLICA_SQL_FILE)
 
 
 def display_logs(dsn: str, title: str, sql_file=READ_SQL_FILE):

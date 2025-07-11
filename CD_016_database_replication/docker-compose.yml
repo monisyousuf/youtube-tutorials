@@ -1,0 +1,82 @@
+services:
+
+  app:
+    build:
+      context: ./app
+      dockerfile: app.Dockerfile
+    volumes:
+      - ./app:/app
+    depends_on:
+      - primary
+      - replica_one
+      - replica_two
+    env_file:
+      - .env
+    environment:
+      PRIMARY_DSN: "postgres://${PRIMARY_MASTER_USER}:${PRIMARY_MASTER_PASSWORD}@primary:5432/${DEFAULT_WORKING_DATABASE}"
+      REPLICA1_DSN: "postgres://${READ_REPLICA_USER}:${READ_REPLICA_PASSWORD}@replica_one:5432/${DEFAULT_WORKING_DATABASE}"
+      REPLICA2_DSN: "postgres://${READ_REPLICA_USER}:${READ_REPLICA_PASSWORD}@replica_two:5432/${DEFAULT_WORKING_DATABASE}"
+    stdin_open: true    # keep STDIN/TTY for interactive menu
+    tty: true
+  primary:
+    build:
+      context: ./primary_db
+      dockerfile: primary.db.Dockerfile
+    container_name: primary
+    env_file:
+      - .env
+    environment:
+      # See .env file
+      POSTGRES_USER: ${PRIMARY_MASTER_USER}
+      POSTGRES_PASSWORD: ${PRIMARY_MASTER_PASSWORD}
+      POSTGRES_DB: ${DEFAULT_WORKING_DATABASE}
+      PGDATABASE: ${DEFAULT_WORKING_DATABASE}
+    ports:
+      - "5432:5432"
+    volumes:
+      - primary-data:/var/lib/postgresql/data
+
+  replica_one:
+    build:
+      context: ./secondary_db
+      dockerfile: secondary.db.Dockerfile
+    container_name: replica_one
+    env_file:
+      - .env
+    environment:
+      # !! See .env file
+      PRIMARY_HOST: primary
+      REPLICA_USER: ${READ_REPLICA_USER}
+      REPLICA_PASSWORD: ${READ_REPLICA_PASSWORD}
+      REPLICA_NAME: replica_one
+    depends_on:
+      - primary
+    ports:
+      - "5433:5432"
+    volumes:
+      - replica_one_data:/var/lib/postgresql/data
+
+  replica_two:
+    build:
+      context: ./secondary_db
+      dockerfile: secondary.db.Dockerfile
+    container_name: replica_two
+    env_file:
+      - .env
+    environment:
+      # !! See .env file
+      PRIMARY_HOST: primary
+      REPLICA_USER: ${READ_REPLICA_USER}
+      REPLICA_PASSWORD: ${READ_REPLICA_PASSWORD}
+      REPLICA_NAME: replica_two
+    depends_on:
+      - primary
+    ports:
+      - "5434:5432"
+    volumes:
+      - replica_two_data:/var/lib/postgresql/data
+
+volumes:
+  primary-data:
+  replica_one_data:
+  replica_two_data:

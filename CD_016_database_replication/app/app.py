@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 import os
 import sys
-from time import sleep, perf_counter
+from time import perf_counter
 from pathlib import Path
 from rich import box
 from rich.console import Console
 from rich.table import Table
-from rich.prompt import Prompt, IntPrompt
+from rich.prompt import Prompt
 from rich.panel import Panel
 from rich.align import Align
 import psycopg2
+from psycopg2 import OperationalError
 
 # ─── CONFIG ────────────────────────────────────────────────────────────────────
-# DSNs for your databases (can also be set via env vars)
 PRIMARY_DSN   = os.getenv("PRIMARY_DSN")
 REPLICA1_DSN  = os.getenv("REPLICA1_DSN")
 REPLICA2_DSN  = os.getenv("REPLICA2_DSN")
@@ -31,11 +31,13 @@ console = Console()
 
 # ─── HELPER ────────────────────────────────────────────────────────────────────
 def get_conn(dsn: str):
+    """
+    Attempts to connect to the database. Returns a connection or None on failure.
+    """
     try:
         return psycopg2.connect(dsn)
-    except OperationalError as e:
-        console.print(f"[red]DB Connection Error:[/red] {e}")
-        sys.exit(1)
+    except OperationalError:
+        return None
 
 # Ensure SQL files exist on startup
 for f in (WRITE_SQL_FILE, READ_SQL_FILE):
@@ -51,50 +53,76 @@ def write_to_primary():
     except (KeyboardInterrupt, EOFError):
         console.print("[red]Input cancelled[/red]")
         return
+
     sql = WRITE_SQL_FILE.read_text()
-    with console.status("[bold green]Writing Data & Waiting for Replicas.....[/bold green]") as status:
-        with get_conn(PRIMARY_DSN) as conn:
+    with console.status("[bold green]Writing data & waiting for replicas...[/bold green]"):
+        conn = get_conn(PRIMARY_DSN)
+        if not conn:
+            console.print(f"Could not connect to replica - PRIMARY")
+            with console.status("Press a key to continue...", spinner="dots"):
+                console.input()
+            return
+        with conn:
             with conn.cursor() as cur:
                 t0 = perf_counter()
                 cur.execute(sql, (msg,))
                 t1 = perf_counter()
+
     console.rule(f":exclamation: Inserted [bold]{msg}[/bold] into [green]PRIMARY[/green]. COMMIT took [bold red]{(t1 - t0)*1000:.2f} ms[/bold red]")
-    display_logs(PRIMARY_DSN, title="")
+    display_logs(PRIMARY_DSN, title="", label="PRIMARY")
 
 
 def read_from_replica(dsn: str, label: str):
     console.rule(f"[bold blue]Read from {label}[/]")
-    display_logs(dsn, title=f"Logs on [blue]{label}[/blue]")
+    display_logs(dsn, title=f"Logs on [blue]{label}[/blue]", label=label)
 
 
 def check_replica_registration():
-    console.rule(f"[bold green]Read from PRIMARY[/]")
-    display_logs(PRIMARY_DSN, title=f"Status on [green]PRIMARY[/green]", sql_file=CHECK_REPLICA_REGISTRATION_SQL_FILE)
+    console.rule(f"[bold green]Check Replication Status[/]")
+    display_logs(PRIMARY_DSN, title=f"Status on [green]PRIMARY[/green]", label="PRIMARY", sql_file=CHECK_REPLICA_REGISTRATION_SQL_FILE)
 
 
 def pause_replica(dsn: str, label: str):
-    console.rule(f"[bold blue]Read from {label}[/]")
-    display_logs(dsn, title=f"Logs on [blue]{label}[/blue]", sql_file=PAUSE_REPLICA_SQL_FILE)
+    console.rule(f"[bold blue]Pause {label}[/]")
+    display_logs(dsn, title=f"Paused [blue]{label}[/blue]", label=label, sql_file=PAUSE_REPLICA_SQL_FILE)
+
 
 def resume_replica(dsn: str, label: str):
-    console.rule(f"[bold blue]Read from {label}[/]")
-    display_logs(dsn, title=f"Logs on [blue]{label}[/blue]", sql_file=RESUME_REPLICA_SQL_FILE)
+    console.rule(f"[bold blue]Resume {label}[/]")
+    display_logs(dsn, title=f"Resumed [blue]{label}[/blue]", label=label, sql_file=RESUME_REPLICA_SQL_FILE)
 
 
-def display_logs(dsn: str, title: str, sql_file=READ_SQL_FILE):
+def display_logs(dsn: str, title: str, label: str, sql_file=READ_SQL_FILE):
+    """
+    Executes the given SQL on the specified DSN and displays the results in a table.
+    If connection fails, prints an error and asks user to continue.
+    """
+    conn = get_conn(dsn)
+    if not conn:
+        console.print(f"Could not connect to replica - {label}")
+        with console.status("Press a key to continue...", spinner="dots"):
+            console.input()
+        return
+
     sql = sql_file.read_text()
-    with get_conn(dsn) as conn:
+    with conn:
         with conn.cursor() as cur:
             cur.execute(sql)
             rows = cur.fetchall()
             cols = [desc.name for desc in cur.description]
+
     table = Table(title=title, box=box.SIMPLE)
     for c in cols:
         table.add_column(c, overflow="fold")
     for row in rows:
         table.add_row(*[str(v) for v in row])
+
     console.print(table)
     console.print()
+
+    # After successful read/write, prompt to continue
+    with console.status("Press a key to continue...", spinner="dots"):
+        console.input()
 
 # ─── MENU ─────────────────────────────────────────────────────────────────────
 def main_menu():
@@ -112,11 +140,11 @@ def main_menu():
             border_style="yellow"
         ))
         try:
-            # Rich prompt for menu selection
             choice = console.input("[bold]Select an option [0-4]:[/]").strip()[:255]
         except (EOFError, KeyboardInterrupt):
             console.print("\n[red]Selection cancelled, exiting.[/red]")
             sys.exit(1)
+
         if choice == '0':
             check_replica_registration()
         elif choice == '1':

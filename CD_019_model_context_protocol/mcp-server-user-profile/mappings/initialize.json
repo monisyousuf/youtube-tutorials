@@ -1,0 +1,69 @@
+{
+    "request": {
+        "method": "POST",
+        "bodyPatterns": [
+            {
+                "matchesJsonPath": "$[?(@.method == 'initialize')]"
+            }
+        ]
+    },
+    "response": {
+        "status": 200,
+        "jsonBody": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {
+                "server": "user-profile-mcp-server",
+                "capabilities": {
+                    "tools": [
+                        {
+                            "name": "get_user_profile",
+                            "description": "Retrieve a user's profile by user_id",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "user_id"
+                                ]
+                            }
+                        },
+                        {
+                            "name": "update_user_email",
+                            "description": "Update the user's email address",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "new_email": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "user_id",
+                                    "new_email"
+                                ]
+                            }
+                        }
+                    ],
+                    "resources": [
+                        {
+                            "name": "user_record",
+                            "description": "User profile resource",
+                            "schema": {
+                                "user_id": "string",
+                                "name": "string",
+                                "email": "string"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

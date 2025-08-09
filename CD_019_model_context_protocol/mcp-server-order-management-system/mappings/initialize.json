@@ -1,0 +1,69 @@
+{
+    "request": {
+        "method": "POST",
+        "bodyPatterns": [
+            {
+                "matchesJsonPath": "$[?(@.method == 'initialize')]"
+            }
+        ]
+    },
+    "response": {
+        "status": 200,
+        "jsonBody": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {
+                "server": "orders-mcp-server",
+                "capabilities": {
+                    "tools": [
+                        {
+                            "name": "get_order_status",
+                            "description": "Fetch shipment & status for a given order_id",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "order_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "order_id"
+                                ]
+                            }
+                        },
+                        {
+                            "name": "update_shipping_address",
+                            "description": "Update the shipping address for an order",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "order_id": {
+                                        "type": "string"
+                                    },
+                                    "new_address": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "order_id",
+                                    "new_address"
+                                ]
+                            }
+                        }
+                    ],
+                    "resources": [
+                        {
+                            "name": "order_record",
+                            "description": "Order record resource; read-only",
+                            "schema": {
+                                "order_id": "string",
+                                "status": "string",
+                                "expected_delivery": "string"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

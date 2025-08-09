@@ -1,0 +1,38 @@
+services:
+  mcp-host:
+    build:
+      context: ./mcp-host
+      dockerfile: mcp.host.Dockerfile
+    volumes:
+      - ./mcp-host/app:/app/app
+      - ./mcp-host/llm-clients:/app/llm-clients
+      - ./mcp-host/mcp-clients:/app/mcp-clients
+    depends_on:
+      mcp-server-order-management-system:
+        condition: service_healthy
+      mcp-server-user-profile:
+        condition: service_healthy
+    environment:
+      - PYTHONPYCACHEPREFIX=/app/python-cache # to prevent creeping of __pycache__ into host
+    stdin_open: true    # keep STDIN/TTY for interactive menu
+    tty: true
+
+  mcp-server-user-profile:
+    build:
+      context: ./mcp-server-user-profile
+      dockerfile: user.profile.Dockerfile
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  mcp-server-order-management-system:
+    build:
+      context: ./mcp-server-order-management-system
+      dockerfile: order.management.system.Dockerfile
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+      interval: 5s
+      timeout: 2s
+      retries: 5

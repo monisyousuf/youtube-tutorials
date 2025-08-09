@@ -26,6 +26,7 @@ replay_pid*
 # IDE Files
 *.iml
 .idea
+.vscode
 
 # Node
 node_modules/
@@ -36,6 +37,9 @@ compose.yaml
 .gradle
 **/build/
 !src/**/build/
+
+# Python
+__pycache__
 
 # Ignore Gradle GUI config
 gradle-app.setting

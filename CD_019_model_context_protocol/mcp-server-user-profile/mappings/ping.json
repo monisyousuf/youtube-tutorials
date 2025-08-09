@@ -1,0 +1,13 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/ping"
+    },
+    "response": {
+        "status": 200,
+        "jsonBody": {
+            "status": "ok",
+            "server": "user-profile-mcp-server"
+        }
+    }
+}

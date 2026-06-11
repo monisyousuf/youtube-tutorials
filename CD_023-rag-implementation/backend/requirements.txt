@@ -1,0 +1,6 @@
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+psycopg2-binary==2.9.10
+sentence-transformers==3.3.1
+anthropic==0.40.0
+openai==1.58.1

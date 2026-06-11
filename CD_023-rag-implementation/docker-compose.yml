@@ -1,0 +1,44 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - documentation
+      - vectorizer
+
+  backend:
+    build: ./backend
+    environment:
+      - DATABASE_URL=postgresql://raguser:ragpassword@database:5432/ragdb
+    depends_on:
+      - database
+
+  database:
+    build: ./database
+    environment:
+      - POSTGRES_DB=ragdb
+      - POSTGRES_USER=raguser
+      - POSTGRES_PASSWORD=ragpassword
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  documentation:
+    build: ./documentation
+    environment:
+      - DOCS_DIR=/docs
+
+  vectorizer:
+    build: ./vectorizer
+    environment:
+      - DATABASE_URL=postgresql://raguser:ragpassword@database:5432/ragdb
+      - DOCS_SERVICE_URL=http://documentation:8001
+    depends_on:
+      - database
+      - documentation
+
+volumes:
+  pgdata:

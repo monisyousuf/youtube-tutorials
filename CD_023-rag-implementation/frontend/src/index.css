@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+}
+
+/* ── Typography ─────────────────────────────────────────── */
+body {
+  font-family: "Nunito", system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Roboto Serif", Georgia, serif;
+}
+
+button {
+  font-family: "Nunito", system-ui, sans-serif;
+}
+
+/* ── Loading animation ──────────────────────────────────── */
+@keyframes pulse-wave {
+  0%, 60%, 100% { opacity: 0.2; transform: scale(0.75); }
+  30%           { opacity: 1;   transform: scale(1);    }
+}
+
+/* ── Chat input blue glow ───────────────────────────────── */
+.chat-input-wrapper {
+  border: 1px solid rgba(78, 142, 211, 0.30);
+  box-shadow: 0 0 0 1px rgba(78, 142, 211, 0.12), 0 0 10px rgba(78, 142, 211, 0.08);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  border-radius: 14px;
+  background: #2d2d2d;
+}
+
+.chat-input-wrapper:focus-within {
+  border-color: rgb(78, 142, 211);
+  box-shadow: 0 0 0 1px rgba(78, 142, 211, 0.45), 0 0 16px rgba(78, 142, 211, 0.38), 0 0 32px rgba(78, 142, 211, 0.12);
+}
+
+/* ── Scrollbars ─────────────────────────────────────────── */
+::-webkit-scrollbar         { width: 6px; }
+::-webkit-scrollbar-track   { background: #1e1e1e; }
+::-webkit-scrollbar-thumb   { background: #454545; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #5a5a5a; }
+
+/* ── Markdown prose (dark) ──────────────────────────────── */
+.prose {
+  color: #d4d4d4;
+  font-family: "Nunito", system-ui, sans-serif;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  font-family: "Roboto Serif", Georgia, serif;
+  color: #e8e8e8;
+}
+
+.prose h1 { font-size: 1.5rem; font-weight: 700; margin: 1.25rem 0 0.75rem; }
+.prose h2 { font-size: 1.25rem; font-weight: 600; margin: 1rem 0 0.5rem; }
+.prose h3 { font-size: 1.1rem;  font-weight: 600; margin: 0.75rem 0 0.4rem; }
+.prose p  { line-height: 1.75; margin-bottom: 0.75rem; }
+
+.prose ul { list-style: disc;    padding-left: 1.5rem; margin-bottom: 0.75rem; }
+.prose ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+.prose li { line-height: 1.75; margin-bottom: 0.2rem; }
+
+.prose strong { font-weight: 700; color: #e8e8e8; }
+.prose em     { font-style: italic; }
+.prose a      { color: #e07040; text-decoration: underline; }
+
+.prose blockquote {
+  border-left: 3px solid #454545;
+  padding-left: 1rem;
+  color: #858585;
+  margin: 0.75rem 0;
+}
+
+.prose code:not(pre code) {
+  background: #3c3c3c;
+  color: #ce9178;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: "Fira Code", "Cascadia Code", monospace;
+}
+
+.prose pre {
+  margin: 0.75rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #454545;
+}
+
+.prose table { border-collapse: collapse; width: 100%; margin-bottom: 0.75rem; }
+.prose th, .prose td {
+  border: 1px solid #454545;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.prose th { background: #2d2d2d; color: #e8e8e8; font-weight: 600; }

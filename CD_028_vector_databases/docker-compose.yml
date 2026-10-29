@@ -1,0 +1,21 @@
+# docker compose up              -> the similarity tool on http://localhost:8000
+# docker compose run --rm test   -> checks every number from the video
+
+# One image for app and test: same Python, same model, same numbers.
+x-image: &image
+  build:
+    context: .
+    dockerfile: app/Dockerfile
+  image: cd028-vector-databases
+
+services:
+
+  app:
+    <<: *image
+    ports:
+      - "8000:8000"
+
+  test:
+    <<: *image
+    profiles: ["test"]               # one-shot: not started by `docker compose up`
+    entrypoint: ["pytest", "-v", "tests"]
